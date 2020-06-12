@@ -6,9 +6,9 @@ interface AddictedLevel {
   levelText: string;
 }
 
-function isBetween(numberToTest: number, initialNumber: number, endNumber: number) {
+const isBetween = (numberToTest: number, initialNumber: number, endNumber: number): boolean => {
   return numberToTest >= initialNumber && numberToTest < endNumber;
-}
+};
 
 const parseLevel = (level: number): string => {
   return String(level).split('.')[0];
