@@ -45,7 +45,8 @@ export const executeAddictedLevel = (message: Message) => {
     const userAdictedLevel = addictedLevel(mentionedUser.username);
     console.log(`> '${message.author.username}' asked for the addicted level for ${mentionedUser.username}.\n`, userAdictedLevel, '\n\n');
     message.reply(
-      `${mentionedUser.username} es ${parseLevel(userAdictedLevel.level)}% vicio. ${mentionedUser.username}: ${userAdictedLevel.levelText}`
+      `${mentionedUser.username} es ${parseLevel(userAdictedLevel.level)}% vicio.
+      \n${mentionedUser.username}: ${userAdictedLevel.levelText}`
     );
   } else {
     const myAdictedLevel = addictedLevel(message.author.username);
