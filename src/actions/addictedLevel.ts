@@ -43,10 +43,14 @@ export const executeAddictedLevel = (message: Message) => {
   const mentionedUser = message.mentions.users.first();
   if (mentionedUser) {
     const userAdictedLevel = addictedLevel(mentionedUser.username);
-    console.log(`> '${message.author.username}' asked for the addicted level for ${mentionedUser.username}.\n`, userAdictedLevel, '\n\n');
+    console.log(
+      `> '${message.author.username}' asked for the addicted level for ${mentionedUser.username} (${mentionedUser.id}).\n`,
+      userAdictedLevel,
+      '\n\n'
+    );
     message.reply(
       `${mentionedUser.username} es ${parseLevel(userAdictedLevel.level)}% vicio.
-      \n${mentionedUser.username}: ${userAdictedLevel.levelText}`
+      \n<@${mentionedUser.id}>: ${userAdictedLevel.levelText}`
     );
   } else {
     const myAdictedLevel = addictedLevel(message.author.username);
