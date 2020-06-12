@@ -1,4 +1,5 @@
 import { Message } from 'discord.js';
+import { logger } from '../utils/logger';
 import * as seedrandom from 'seedrandom';
 
 interface AddictedLevel {
@@ -43,18 +44,17 @@ export const executeAddictedLevel = (message: Message) => {
   const mentionedUser = message.mentions.users.first();
   if (mentionedUser) {
     const userAdictedLevel = addictedLevel(mentionedUser.username);
-    console.log(
-      `> '${message.author.username}' asked for the addicted level for ${mentionedUser.username} (${mentionedUser.id}).\n`,
+    logger('ADDICTED_LEVEL_FOR_USER', [
+      `'${message.author.username}' asked for the addicted level for ${mentionedUser.username} (${mentionedUser.id}).\n`,
       userAdictedLevel,
-      '\n\n'
-    );
+    ]);
     message.reply(
       `${mentionedUser.username} es ${parseLevel(userAdictedLevel.level)}% vicio.
       \n<@${mentionedUser.id}>: ${userAdictedLevel.levelText}`
     );
   } else {
-    const myAdictedLevel = addictedLevel(message.author.username);
-    console.log(`> '${message.author.username}' asked for his addicted level.\n`, myAdictedLevel, '\n\n');
-    message.reply(`Eres ${parseLevel(myAdictedLevel.level)}% vicio. ${myAdictedLevel.levelText}`);
+    const userAdictedLevel = addictedLevel(message.author.username);
+    logger('USER_ADDICTED_LEVEL', [`'${message.author.username}' asked for his addicted level.\n`, userAdictedLevel]);
+    message.reply(`Eres ${parseLevel(userAdictedLevel.level)}% vicio. ${userAdictedLevel.levelText}`);
   }
 };
