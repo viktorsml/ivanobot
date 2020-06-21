@@ -1,6 +1,6 @@
+import * as seedrandom from 'seedrandom';
 import { Message } from 'discord.js';
 import { logger } from '../utils/logger';
-import * as seedrandom from 'seedrandom';
 
 interface AddictedLevel {
   level: any;
