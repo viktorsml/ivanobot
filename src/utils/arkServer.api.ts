@@ -39,4 +39,8 @@ export class ArkServerApi {
   public static stopServer(): Promise<string> {
     return this.executeCommand(`sudo /bin/systemctl stop ark.service`);
   }
+
+  public static getPortsInformation(): Promise<string> {
+    return this.executeCommand(`sudo /usr/bin/lsof -i -P -n | /bin/grep -w 'ShooterGa'`);
+  }
 }

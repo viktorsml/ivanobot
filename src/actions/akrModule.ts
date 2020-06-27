@@ -3,6 +3,7 @@ import { arkStartCommand } from '../commands/ark.start.command';
 import { arkRestartCommand } from '../commands/ark.restart.command';
 import { arkStatusCommand } from '../commands/ark.status.command';
 import { arkStopCommand } from '../commands/ark.stop.command';
+import { arkPortCommand } from '../commands/ark.ports.command';
 import { logger } from '../utils/logger';
 
 const errorMessage = (action: string) => {
@@ -26,6 +27,9 @@ export const arkModule = (message: Message) => {
         break;
       case 'stop':
         arkStopCommand(message);
+        break;
+      case 'ports':
+        arkPortCommand(message);
         break;
       default:
         message.reply(errorMessage(action));
