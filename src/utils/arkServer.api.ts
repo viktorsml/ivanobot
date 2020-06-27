@@ -5,7 +5,6 @@ export class ArkServerApi {
 
   private static executeCommand(command: string): Promise<string> {
     return new Promise((resolve, reject) => {
-      // exec(`systemctl status ark.service | sed -n '3 p'`, this.sshHost, (error, stdout, stderr) => {
       exec(command, this.sshHost, (error, stdout, stderr) => {
         if (error) {
           reject(error);
