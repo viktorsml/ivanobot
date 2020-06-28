@@ -13,7 +13,7 @@ export const arkModule = (message: Message) => {
   const foundValidRoles = member.roles.cache.find((role) => role.name === 'CaguamoTecnico' || role.name === 'Tecnico');
 
   if (!foundValidRoles) {
-    logger('NOT_ENOUGH_PERMISSIONS', [`'@${author.username}' tried to run a protected command`, content]);
+    logger.action('NOT_ENOUGH_PERMISSIONS', [`'@${author.username}' tried to run a protected command`, content]);
     message.reply('Te falta más barrio. No tienes permiso para ejecutar este comando. Contacta a un CaguamoTecnico.');
     return;
   }

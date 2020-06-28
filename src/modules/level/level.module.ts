@@ -8,7 +8,7 @@ export const levelModule = (message: Message) => {
 
   if (mentionedUser) {
     const { level, levelText } = addictedLevel(mentionedUser.username);
-    logger('ADDICTED_LEVEL_FOR_USER', [
+    logger.action('ADDICTED_LEVEL_FOR_USER', [
       `'${author.username}' asked for the addicted level for ${mentionedUser.username} (${mentionedUser.id}).\n`,
       { level, levelText },
     ]);
@@ -17,6 +17,6 @@ export const levelModule = (message: Message) => {
   }
 
   const { level, levelText } = addictedLevel(author.username);
-  logger('USER_ADDICTED_LEVEL', [`'${author.username}' asked for his addicted level.\n`, { level, levelText }]);
+  logger.action('USER_ADDICTED_LEVEL', [`'${author.username}' asked for his addicted level.\n`, { level, levelText }]);
   message.reply(`Eres ${parseLevel(level)}% vicio. ${levelText}`);
 };
