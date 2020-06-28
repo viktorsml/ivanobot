@@ -1,5 +1,6 @@
 import { Client } from 'discord.js';
+import { logger } from '../api/ivanobot.api';
 
-export const readyListener = (client: Client) => {
-  console.info(`Logged in as ${client.user.tag}!\n`);
+export const readyListener = (userTag: string) => {
+  logger('CLIENT_LOGIN', [`Logged in as ${userTag}!`]);
 };

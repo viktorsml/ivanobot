@@ -1,10 +1,10 @@
 import { Message } from 'discord.js';
-import { executeAddictedLevel } from '../actions/addictedLevel';
-import { ivanoInvoke } from '../actions/ivanoInvoke';
-import { arkModule } from '../actions/akrModule';
+import { arkModule } from '../modules/ark/akr.module';
+import { levelModule } from '../modules/level/level.module';
+import { ivanoModule } from '../modules/ivano/ivano.module';
 
 export const messageListener = (message: Message) => {
-  if (message.content.startsWith('!nivel')) executeAddictedLevel(message);
-  if (message.content.startsWith('!ivano')) ivanoInvoke(message);
+  if (message.content.startsWith('!nivel')) levelModule(message);
+  if (message.content.startsWith('!ivano')) ivanoModule(message);
   if (message.content.startsWith('!ark')) arkModule(message);
 };
