@@ -1,35 +1,41 @@
 import { Message } from 'discord.js';
+
+import { NOT_ENOUGH_PERMISIONS } from '../../../shared/actions-text';
 import { logger } from '../../../shared/ivanobot.api';
-import { arkStartCommand } from './commands/ark-start.command';
+import { canUserExecuteCommand } from '../../utils/validation';
+import { arkPortCommand } from './commands/ark-ports.command';
 import { arkRestartCommand } from './commands/ark-restart.command';
+import { arkSpeedCommand } from './commands/ark-speed.command';
+import { arkStartCommand } from './commands/ark-start.command';
 import { arkStatusCommand } from './commands/ark-status.command';
 import { arkStopCommand } from './commands/ark-stop.command';
-import { arkPortCommand } from './commands/ark-ports.command';
-import { arkSpeedCommand } from './commands/ark-speed.command';
+
+const invalidCommandText = (command: string) => {
+  return (
+    `El comando "${command}" no existe. Comandos disponibles:` +
+    '\n\n:information_source: **!ark status**' +
+    '\n:arrow_forward: **!ark start**' +
+    '\n:repeat: **!ark restart**' +
+    '\n:stop_button: **!ark stop**' +
+    '\n:1234: **!ark ports**' +
+    '\n:zap: **!ark speedtest**' +
+    '\n\n> *Ay no, que feo caso. Todo meco el vato.*'
+  );
+};
 
 export const arkModule = (message: Message) => {
   const { content, member, author } = message;
-  const [_, action] = content.split(' ');
-  const foundValidRoles = member.roles.cache.find((role) => role.name === 'CaguamoTecnico' || role.name === 'Tecnico');
+  const command = content.split(' ')[1].toLocaleLowerCase();
 
-  if (!foundValidRoles) {
-    logger.action('NOT_ENOUGH_PERMISSIONS', [`'@${author.username}' tried to run a protected command`, content]);
-    message.reply('Te falta más barrio. No tienes permiso para ejecutar este comando. Contacta a un CaguamoTecnico.');
+  if (!canUserExecuteCommand({ userRoles: member.roles.cache, validRoles: ['723271885340803082', '726549737729163356'] })) {
+    logger.action(NOT_ENOUGH_PERMISIONS.id, [`"@${author.username}" tried to run a protected command`, content]);
+    message.reply(NOT_ENOUGH_PERMISIONS.friendlyText);
     return;
   }
 
-  switch (action) {
+  switch (command) {
     case 'status':
       arkStatusCommand(message);
-      break;
-    case 'restart':
-      arkRestartCommand(message);
-      break;
-    case 'start':
-      arkStartCommand(message);
-      break;
-    case 'stop':
-      arkStopCommand(message);
       break;
     case 'ports':
       arkPortCommand(message);
@@ -37,17 +43,18 @@ export const arkModule = (message: Message) => {
     case 'speedtest':
       arkSpeedCommand(message);
       break;
+    case 'start':
+      arkStartCommand(message);
+      break;
+    case 'stop':
+      arkStopCommand(message);
+      break;
+    case 'restart':
+      arkRestartCommand(message);
+      break;
+
     default:
-      message.reply(
-        `El comando "${action}" no existe. Comandos disponibles:` +
-          '\n\n:information_source: **!ark status**' +
-          '\n:arrow_forward: **!ark start**' +
-          '\n:repeat: **!ark restart**' +
-          '\n:stop_button: **!ark stop**' +
-          '\n:1234: **!ark ports**' +
-          '\n:zap: **!ark speedtest**' +
-          '\n\n> *Ay no, que feo caso. Todo meco el vato.*'
-      );
+      message.reply(invalidCommandText(command));
       break;
   }
 };

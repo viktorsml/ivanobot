@@ -1,52 +1,57 @@
-import axios, { AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 import { Message } from 'discord.js';
 
-import { ArkPortsResponse, ArkStatusResponse } from '../../../../shared/interfaces';
-import { daemonApiUrl, friendlyErrorMessage, logger } from '../../../../shared/ivanobot.api';
-import { token } from '../utils/transaction-token';
+import { ArkStatusResponse } from '../../../../shared/interfaces';
+import { logger } from '../../../../shared/ivanobot.api';
+import { fetchDaemonData, RunCommandParams } from '../functions/daemon-fetch';
+import { watchArkServerStartup } from '../functions/wath-startup';
 
-async function sleep(millis) {
-  return new Promise((resolve) => setTimeout(resolve, millis));
-}
+const clientSettingsForStatusServer: RunCommandParams = {
+  endpoint: '/ark/serverStatus',
+  commandMeta: {
+    wait: 'ARK_SERVER_RETRIEVE_STATUS',
+    success: 'ARK_SERVER_RETRIEVE_STATUS_SUCCESSFUL',
+    failure: 'ARK_SERVER_RETRIEVE_STATUS_FAILED',
+  },
+};
+
+const clientSettingsForStartServer: RunCommandParams = {
+  endpoint: '/ark/startServer',
+  initialMessageText: 'Iniciando ARK Server...',
+  commandMeta: {
+    wait: 'ARK_SERVER_START',
+    success: 'ARK_SERVER_START_SUCCESSFUL',
+    failure: 'ARK_SERVER_START_FAILED',
+  },
+};
 
 export const arkStartCommand = async (message: Message) => {
-  logger.action('ARK_SERVER_START', [`Invoked by '@${message.author.username}'`]);
-  const initialMessage = await message.channel.send('Iniciando servidor de ark. Espera un momento...');
-  try {
-    const arkStatus: AxiosResponse<ArkStatusResponse> = await axios.post(daemonApiUrl + '/ark/serverStatus', token);
-    const { isActive, since } = arkStatus.data;
-    // check server status
-    if (isActive) {
-      logger.action('ARK_SERVER_ALREADY_ACTIVE', [isActive]);
-      message.channel.send(
-        `El servidor de ARK ya se encuentra activado desde el ${since} por lo que no se tomó ninguna acción.` +
-          '\n\n> *Si quires reiniciar el servidor usa el comando "!ark restart".*'
-      );
-      initialMessage.delete();
-      return;
-    }
-    // start server if necesary
-    const arkStartServer: AxiosResponse<string> = await axios.post(daemonApiUrl + '/ark/startServer', token);
-    logger.action('ARK_SUCCESSFULLY_STARTED', [arkStartServer.data]);
-    const pendingMessage = await message.channel.send(
-      ':construction_worker: Listo, el servidor se está iniciando. Te avisaré cuando ya puedas entrar a jugar.'
+  const arkStatusResponse: AxiosResponse<ArkStatusResponse> = await fetchDaemonData(message, clientSettingsForStatusServer);
+  if (!arkStatusResponse) return;
+  const { isActive, since } = arkStatusResponse.data;
+  if (isActive) {
+    logger.action('ARK_SERVER_ALREADY_ACTIVE', [arkStatusResponse.data]);
+    message.channel.send(
+      `>>> El servidor de ARK ya se encuentra activado desde el ${since} por lo que no se tomó ninguna acción.` +
+        '\n\n*Si quires reiniciar el servidor usa el comando "!ark restart".*'
     );
-    initialMessage.delete();
-    // check server status every 20 seconds to see if people can start to play
-    let totalPorts = 0;
-    while (totalPorts < 3) {
-      await sleep(30000);
-      const arkPorts: AxiosResponse<ArkPortsResponse> = await axios.post(daemonApiUrl + '/ark/activePorts', token);
-      const { activePorts } = arkPorts.data;
-      totalPorts = activePorts;
-    }
+    return;
+  }
+
+  // start server
+  const arkServerStartResponse = await fetchDaemonData(message, clientSettingsForStartServer);
+  const pendingMessage = await message.channel.send(
+    ':construction_worker: Listo, el servidor se está iniciando. Te avisaré cuando ya puedas entrar a jugar. (Usualmente tarda 3min.)'
+  );
+  console.log(arkServerStartResponse.data);
+
+  // check server status every 20 seconds to see if people can start to play
+  try {
+    await watchArkServerStartup(message);
     message.channel.send(`¡Listo! Ya puedes entrar a jugar, <@${message.author.id}>. :partying_face:`);
-    pendingMessage.delete();
   } catch (error) {
-    const errorCode = error.response ? error.response.status : error.code;
-    const errorTag = error.response ? error.response.data : 'NO_DAEMON_CONNECTION';
-    logger.error('ARK_START_FAILED', [errorCode, errorTag]);
-    message.channel.send(friendlyErrorMessage(errorTag, errorCode));
-    initialMessage.delete();
+    message.channel.send(`\nYa no te podré avisar cuando ya puedas entrar.`);
+  } finally {
+    pendingMessage.delete();
   }
 };

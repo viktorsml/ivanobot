@@ -1,22 +1,40 @@
-import axios, { AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 import { Message } from 'discord.js';
 
-import { daemonApiUrl, friendlyErrorMessage, logger } from '../../../../shared/ivanobot.api';
-import { token } from '../utils/transaction-token';
+import { ArkStatusResponse } from '../../../../shared/interfaces';
+import { logger } from '../../../../shared/ivanobot.api';
+import { fetchDaemonData, RunCommandParams } from '../functions/daemon-fetch';
+
+const clientSettingsForStatusServer: RunCommandParams = {
+  endpoint: '/ark/serverStatus',
+  commandMeta: {
+    wait: 'ARK_SERVER_RETRIEVE_STATUS',
+    success: 'ARK_SERVER_RETRIEVE_STATUS_SUCCESSFUL',
+    failure: 'ARK_SERVER_RETRIEVE_STATUS_FAILED',
+  },
+};
+
+const clientSettingsForStopServer: RunCommandParams = {
+  endpoint: '/ark/stopServer',
+  initialMessageText: 'No me duele, me quema, me lastima pero ni pedo, estoy apagando el server...',
+  commandMeta: {
+    wait: 'ARK_SERVER_STOP',
+    success: 'ARK_SERVER_STOP_SUCCESSFUL',
+    failure: 'ARK_SERVER_STOP_FAILED',
+  },
+};
 
 export const arkStopCommand = async (message: Message) => {
-  logger.action('ARK_STOP_SERVER', [`Invoked by '@${message.author.username}'`]);
-  const initialMessage = await message.channel.send('No me duele, me quema, me lastima pero ni pedo, estoy apagando el server...');
-  try {
-    const arkStopServer: AxiosResponse<string> = await axios.post(daemonApiUrl + '/ark/stopServer', token);
-    logger.action('ARK_STOP_SUCCESSFUL', [arkStopServer]);
-    message.channel.send('Listo, el servidor se detuvo correctamente. Espero hayas tenido buenas razones. :rage:');
-  } catch (error) {
-    const errorCode = error.response ? error.response.status : error.code;
-    const errorTag = error.response ? error.response.data : 'NO_DAEMON_CONNECTION';
-    logger.error('ARK_STOP_FAILED', [errorCode, errorTag]);
-    message.channel.send(friendlyErrorMessage(errorTag, errorCode));
-  } finally {
-    initialMessage.delete();
+  const arkStatusResponse: AxiosResponse<ArkStatusResponse> = await fetchDaemonData(message, clientSettingsForStatusServer);
+  if (!arkStatusResponse) return;
+  const { isActive, since } = arkStatusResponse.data;
+  if (!isActive) {
+    logger.action('ARK_SERVER_ALREADY_INACTIVE', [arkStatusResponse.data]);
+    message.channel.send(`> *El servidor de ARK ya se encuentra apagado desde el ${since} por lo que no se tomó ninguna acción.*`);
+    return;
   }
+
+  // stop server
+  await fetchDaemonData(message, clientSettingsForStopServer);
+  message.channel.send('Listo, el servidor se detuvo correctamente. Espero hayas tenido buenas razones. :rage:');
 };
