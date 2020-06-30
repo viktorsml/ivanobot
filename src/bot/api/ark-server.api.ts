@@ -12,7 +12,7 @@ interface ServerStatus {
 
 export const executeCommand = (command: string): Promise<string> => {
   return new Promise((resolve, reject) => {
-    exec(command, process.env.SSH_HOST, (error, stdout, stderr) => {
+    exec(command, 'citrux@caguamoland.team -p 6969', (error, stdout, stderr) => {
       if (error) {
         reject(error);
       } else {

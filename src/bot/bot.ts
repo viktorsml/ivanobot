@@ -1,9 +1,7 @@
-require('dotenv').config();
-
 import { Client } from 'discord.js';
 import { messageListener } from './listeners/message.listener';
 import { readyListener } from './listeners/ready.listener';
-import { logger } from './api/ivanobot.api';
+import { logger } from './../shared/ivanobot.api';
 
 (async () => {
   try {

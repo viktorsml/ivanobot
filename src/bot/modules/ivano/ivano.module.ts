@@ -1,5 +1,5 @@
 import { Message } from 'discord.js';
-import { logger } from '../../api/ivanobot.api';
+import { logger } from '../../../shared/ivanobot.api';
 
 export const ivanoModule = (message: Message) => {
   const IVANO_ID = '531705363804848129';

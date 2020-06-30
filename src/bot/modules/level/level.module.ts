@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
 import { addictedLevel, parseLevel } from './functions/level.functions';
-import { logger } from '../../api/ivanobot.api';
+import { logger } from '../../../shared/ivanobot.api';
 
 export const levelModule = (message: Message) => {
   const { mentions, author } = message;
