@@ -1,5 +1,5 @@
 import { Message } from 'discord.js';
-import { logger } from '../../api/ivanobot.api';
+import { logger } from '../../../shared/ivanobot.api';
 import { arkStartCommand } from './commands/ark-start.command';
 import { arkRestartCommand } from './commands/ark-restart.command';
 import { arkStatusCommand } from './commands/ark-status.command';
