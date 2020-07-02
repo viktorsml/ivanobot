@@ -1,0 +1,7 @@
+{
+  "importSorter.generalConfiguration.sortOnBeforeSave": true,
+  "importSorter.importStringConfiguration.maximumNumberOfImportExpressionsPerLine.count": 140,
+  "importSorter.importStringConfiguration.numberOfEmptyLinesAfterAllImports": 1,
+  "importSorter.importStringConfiguration.quoteMark": "single",
+  "importSorter.importStringConfiguration.tabSize": 2
+}

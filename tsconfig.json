@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "module": "commonjs",
     "sourceMap": false,
     "outDir": "dist/",
+    "rootDir": "./src",
     "noImplicitAny": false,
     "removeComments": true,
     "preserveConstEnums": true,
     "types": ["node"]
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "test"]
 }
