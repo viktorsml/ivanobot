@@ -1,27 +1,24 @@
 require('dotenv').config();
 
 const pjson = require('./../../package.json');
-import * as crypto from 'crypto-js';
 
 export const botVersion: string = pjson.version;
 export const discordToken = process.env.TOKEN;
 export const enviroment = process.env.NODE_ENV;
-export const daemonPort = 49249;
-export const daemonApiUrl = enviroment === 'development' ? `http://localhost:${daemonPort}` : `http://caguamoland.team:${daemonPort}`;
-export const restApiToken = crypto.SHA256(discordToken).toString(crypto.enc.Hex);
+export const commandPrefix = enviroment === 'development' ? process.env.SSH_LOGIN : '';
 
 export const logger = {
   action: (title: string, args: any[] = []) => {
     const logAction = `> ${title}: `;
     console.log(logAction, ...args);
   },
-  error: (title: string, args: any[] = []) => {
-    const logAction = `> ${title}: `;
-    console.error(logAction, ...args);
+  error: (title: string, error: any = null) => {
+    const logAction = `> ${title}`;
+    console.error('\x1b[31m%s\x1b[0m', logAction);
+    console.error(error);
   },
 };
 
-export const friendlyErrorMessage = (errorTag: string, errorCode: string | number = null): string => {
-  const errorCodeText = errorCode ? `${errorCode} (${errorTag})` : errorTag;
-  return `Lo siento pero ocurrió un error. :sob:\n\n> [Error code: ${errorCodeText}]`;
+export const friendlyErrorMessage = (friendlyErrorMessage: string, errorCode: string): string => {
+  return `${friendlyErrorMessage}\n\n>>> \`\`\`diff\n- ${errorCode}\n\`\`\``;
 };

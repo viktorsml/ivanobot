@@ -1,26 +1,26 @@
-import axios, { AxiosResponse } from 'axios';
-import { Message } from 'discord.js';
-
-import { ArkPortsResponse } from '../../../../shared/interfaces';
 import { logger } from '../../../../shared/ivanobot.api';
-import { apiEndpoint, delayAsyncBlock } from '../../../utils/daemon-client';
-import { token } from '../../../utils/transactions';
-import { handleDaemonFetchError } from './daemon-fetch';
+import { getArkStatus } from '../commands/ark-status.command';
 
-export const watchArkServerStartup = (message: Message): Promise<void> => {
+export const delayAsyncBlock = async (milliseconds: number) => {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+};
+
+export const watchArkServerStartup = (): Promise<void> => {
   return new Promise(async (resolve, reject) => {
-    logger.action('WATCH_ARK_SERVER_STARTUP', ['STARTED']);
+    logger.action('WATCH_ARK_SERVER_STARTUP', [`Started at ${new Date()}`]);
     try {
-      let totalPorts = 0;
-      while (totalPorts < 3) {
+      let isOnline = false;
+      while (!isOnline) {
         await delayAsyncBlock(30000);
-        const arkPorts: AxiosResponse<ArkPortsResponse> = await axios.post(apiEndpoint('/ark/activePorts'), token);
-        logger.action('WATCH_ARK_SERVER_STARTUP_FOUND', [`Ports found: "${arkPorts.data.activePorts}"`]);
-        totalPorts = arkPorts.data.activePorts;
+        const { isServerOnline, currentStatus } = await getArkStatus();
+        if (currentStatus === 'OFFLINE') {
+          throw new Error('WATCH_ARK_SERVER_STARTUP_INTERRUPTED');
+        }
+        isOnline = isServerOnline;
       }
       resolve();
     } catch (error) {
-      handleDaemonFetchError(error, 'WATCH_ARK_SERVER_STARTUP_FAILED', message);
+      logger.error('WATCH_ARK_SERVER_STARTUP_FAILED', error);
       reject(error);
     }
   });

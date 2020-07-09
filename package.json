@@ -1,20 +1,14 @@
 {
   "name": "ivanobot",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "",
   "main": "dist/bot.js",
   "scripts": {
-    "start": "npm run start:bot",
-    "start:bot": "node dist/bot.js",
-    "start:daemon": "node dist/daemon.js",
+    "start": "node dist/bot.js",
     "build": "webpack --mode=production",
-    "dev:bot": "npm-run-all --parallel watch:build watch:bot",
-    "dev:bot:as-production": "cross-env NODE_ENV=production npm-run-all --parallel watch:build:as-production watch:bot",
-    "dev:daemon": "npm-run-all --parallel watch:build watch:daemon",
+    "dev": "npm-run-all --parallel watch:build watch:bot",
     "watch:build": "webpack --mode=development --watch",
-    "watch:build:as-production": "webpack --mode=production --watch",
-    "watch:bot": "nodemon \"./dist/bot.js\" --watch \"./dist/bot.js\"",
-    "watch:daemon": "nodemon \"./dist/daemon.js\" --watch \"./dist/daemon.js\""
+    "watch:bot": "nodemon \"./dist/bot.js\" --watch \"./dist/bot.js\""
   },
   "author": "",
   "license": "ISC",
