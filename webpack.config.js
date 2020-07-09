@@ -4,7 +4,6 @@ const nodeExternals = require('webpack-node-externals');
 const webpackConfiguration = {
   entry: {
     bot: './src/bot/bot.ts',
-    daemon: './src/daemon/daemon.ts',
   },
   target: 'node',
   externals: [nodeExternals()],
