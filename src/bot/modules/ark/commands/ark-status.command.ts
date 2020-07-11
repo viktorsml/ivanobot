@@ -1,7 +1,7 @@
-import { Message } from 'discord.js';
+import { Message, MessageEmbed } from 'discord.js';
 
 import { StatusCode } from '../../../../shared/interfaces';
-import { friendlyErrorMessage, logger } from '../../../../shared/ivanobot.api';
+import { logger } from '../../../../shared/ivanobot.api';
 import { executeCommand } from '../functions/execute-command';
 
 type ServerStatus = 'OFFLINE' | 'STARTING' | 'ONLINE';
@@ -57,22 +57,35 @@ export const getArkStatus = async (): Promise<ArkStatus> => {
 
 export const arkStatusCommand = async (message: Message) => {
   const initialMessage = await message.channel.send('Revisando estado del servidor de ARK...');
-  const { currentStatus, errorCode, arkOnlinePlayers } = await getArkStatus();
+  const { currentStatus, errorCode, arkOnlinePlayers, arkServersLink } = await getArkStatus();
   if (errorCode && errorCode !== 'ARK_CONTAINER_STOPED') {
     message.channel.send(
-      friendlyErrorMessage('Whops! No puedo determinar el estado del servidor de ARK. :disappointed_relieved:', errorCode)
+      new MessageEmbed()
+        .setColor('RED')
+        .setTitle('Whops! No puedo determinar el estado del servidor de ARK. :disappointed_relieved:')
+        .setFooter(errorCode)
     );
     initialMessage.delete();
     return;
   }
   if (currentStatus === 'OFFLINE') {
-    message.channel.send(':octagonal_sign: El servidor de ARK no está activo.');
+    message.channel.send(new MessageEmbed().setColor('GREY').setTitle('El servidor de ARK no está activo.'));
   }
   if (currentStatus === 'ONLINE') {
-    message.channel.send(`:white_check_mark: El servidor de ARK está activo (${arkOnlinePlayers}).`);
+    message.channel.send(
+      new MessageEmbed()
+        .setColor('GREEN')
+        .setTitle(`El servidor de ARK está activo.`)
+        .addFields({ name: 'Jugadores', value: arkOnlinePlayers.replace('Players: ', '') })
+    );
+    message.channel.send(
+      new MessageEmbed().setTitle(':alien: Ver jugadores activos.').setURL(arkServersLink.replace('ARKServers link: ', ''))
+    );
   }
   if (currentStatus === 'STARTING') {
-    message.channel.send(':construction_worker: El servidor de ARK se está encendiendo. Usualmente tarda ~3min.');
+    message.channel.send(
+      new MessageEmbed().setColor('YELLOW').setTitle(':construction_worker: El servidor de ARK se está iniciando. Usualmente tarda ~3min.')
+    );
   }
   initialMessage.delete();
 };

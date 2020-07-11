@@ -1,4 +1,4 @@
-import { Message } from 'discord.js';
+import { Message, MessageEmbed } from 'discord.js';
 
 import { StatusCode } from '../../../../shared/interfaces';
 import { friendlyErrorMessage, logger } from '../../../../shared/ivanobot.api';
@@ -33,7 +33,10 @@ export const arkStopCommand = async (message: Message) => {
 
   if (errorCode) {
     message.channel.send(
-      friendlyErrorMessage('Whops! No puedo determinar el estado del servidor de ARK. :disappointed_relieved:', errorCode)
+      new MessageEmbed()
+        .setColor('RED')
+        .setTitle('Whops! No puedo determinar el estado del servidor de ARK. :disappointed_relieved:')
+        .setFooter(errorCode)
     );
     initialMessage.delete();
     return;
@@ -41,7 +44,9 @@ export const arkStopCommand = async (message: Message) => {
 
   if (currentStatus === 'OFFLINE') {
     logger.action('ARK_SERVER_ALREADY_INACTIVE');
-    message.channel.send('El servidor de ARK ya se encuentra apagado desde por lo que no se tomó ninguna acción.');
+    message.channel.send(
+      new MessageEmbed().setColor('GREY').setTitle('El servidor de ARK ya se encuentra apagado desde por lo que no se tomó ninguna acción.')
+    );
     initialMessage.delete();
     return;
   }
@@ -55,15 +60,17 @@ export const arkStopCommand = async (message: Message) => {
 
   if (!successfullyStopped) {
     message.channel.send(
-      friendlyErrorMessage(
-        'Hmm, que extraño. Ocurrió un problema desconocido al momento de detener el servidor de ARK. :thinking:',
-        stopArkServerErroCode
-      )
+      new MessageEmbed()
+        .setColor('RED')
+        .setTitle('Hmm, que extraño. Ocurrió un problema desconocido al momento de detener el servidor de ARK. :thinking:')
+        .setFooter(stopArkServerErroCode)
     );
     pendingMessage.delete();
     return;
   }
 
-  message.channel.send('Listo, el servidor se detuvo correctamente. Espero hayas tenido buenas razones. :rage:');
+  message.channel.send(
+    new MessageEmbed().setColor('GREY').setTitle('Listo, el servidor se detuvo correctamente. Espero hayas tenido buenas razones. :rage:')
+  );
   pendingMessage.delete();
 };
