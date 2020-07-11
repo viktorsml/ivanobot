@@ -6,24 +6,30 @@ import { executeCommand } from '../functions/execute-command';
 import { watchArkServerStartup } from '../functions/wath-startup';
 import { getArkStatus } from './ark-status.command';
 
+type StartMethod = 'CONTAINER' | 'ARKMANAGER';
+
 interface StartArkServerResponse {
   successfullyStarted: boolean;
   errorCode?: string;
 }
 
-export const startArkServer = async (): Promise<StartArkServerResponse> => {
+export const startArkServer = async (startMethod: StartMethod): Promise<StartArkServerResponse> => {
   const arkStatusCode: StatusCode = {
     initial: 'ARK_START_INITIALIZED',
     success: 'ARK_START_SUCCESSFUL',
     failure: 'ARK_START_FAILED',
   };
-  logger.action(arkStatusCode.initial);
+  const startArkServerWithArkManager = 'docker exec -i CaguamoArk arkmanager start';
+  const startContainerCommand = `docker start CaguamoArk && ${startArkServerWithArkManager}`;
+  const commandToRun = startMethod === 'CONTAINER' ? startContainerCommand : startArkServerWithArkManager;
+  logger.action(arkStatusCode.initial, [`With method: ${startMethod}`]);
   try {
-    const commandResponse = await executeCommand('docker exec -i CaguamoArk arkmanager start');
-    console.log(commandResponse);
+    const commandResponse = await executeCommand(commandToRun);
+    logger.action(arkStatusCode.success, [commandResponse]);
     return { successfullyStarted: true };
   } catch (error) {
-    return { successfullyStarted: false, errorCode: 'UNKOWN_ERROR' };
+    logger.error(arkStatusCode.failure, error);
+    return { successfullyStarted: false, errorCode: arkStatusCode.failure };
   }
 };
 
@@ -31,7 +37,7 @@ export const arkStartCommand = async (message: Message) => {
   const initialMessage = await message.channel.send('Revisando estado del servidor...');
   const { currentStatus, errorCode } = await getArkStatus();
 
-  if (errorCode) {
+  if (errorCode && errorCode !== 'ARK_CONTAINER_STOPED') {
     message.channel.send(friendlyErrorMessage('Whops! No puedo determinar el estado del servidor ARK. :disappointed_relieved:', errorCode));
     initialMessage.delete();
     return;
@@ -57,7 +63,8 @@ export const arkStartCommand = async (message: Message) => {
   }
 
   // start server
-  const { successfullyStarted, errorCode: startArkServerErrorCode } = await startArkServer();
+  const startMethod: StartMethod = errorCode === 'ARK_CONTAINER_STOPED' ? 'CONTAINER' : 'ARKMANAGER';
+  const { successfullyStarted, errorCode: startArkServerErrorCode } = await startArkServer(startMethod);
   initialMessage.delete();
 
   if (!successfullyStarted) {

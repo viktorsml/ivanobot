@@ -18,7 +18,7 @@ export const stopArkServer = async (): Promise<StopArkServerResponse> => {
   };
   logger.action(arkStatusCode.initial);
   try {
-    const commandResponse = await executeCommand('docker exec -i CaguamoArk arkmanager stop');
+    const commandResponse = await executeCommand('docker exec -i CaguamoArk arkmanager stop --saveworld');
     logger.action(arkStatusCode.success, [commandResponse]);
     return { successfullyStopped: true };
   } catch (error) {

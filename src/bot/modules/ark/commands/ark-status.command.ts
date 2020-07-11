@@ -47,8 +47,8 @@ export const getArkStatus = async (): Promise<ArkStatus> => {
       return { ...defaultOffline, errorCode: 'SSH_CONNECTION_FAILURE' };
     }
     if (/(is not running)/.test(error.message)) {
-      logger.action('ARK_STATUS_STOPED', [error.message]);
-      return defaultOffline;
+      logger.action('ARK_CONTAINER_STOPED', [error.message]);
+      return { ...defaultOffline, errorCode: 'ARK_CONTAINER_STOPED' };
     }
     logger.error(arkStatusCode.failure, error);
     return { ...defaultOffline, errorCode: arkStatusCode.failure };
@@ -58,7 +58,7 @@ export const getArkStatus = async (): Promise<ArkStatus> => {
 export const arkStatusCommand = async (message: Message) => {
   const initialMessage = await message.channel.send('Revisando estado del servidor de ARK...');
   const { currentStatus, errorCode, arkOnlinePlayers } = await getArkStatus();
-  if (errorCode) {
+  if (errorCode && errorCode !== 'ARK_CONTAINER_STOPED') {
     message.channel.send(
       friendlyErrorMessage('Whops! No puedo determinar el estado del servidor de ARK. :disappointed_relieved:', errorCode)
     );

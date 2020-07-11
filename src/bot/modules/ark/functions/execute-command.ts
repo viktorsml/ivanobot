@@ -1,6 +1,6 @@
 import { exec } from 'child_process';
 
-import { commandPrefix } from '../../../../shared/ivanobot.api';
+import { commandPrefix, enviroment } from '../../../../shared/ivanobot.api';
 
 const removeUnwantedCharacters = (line: string): string => {
   return line
@@ -14,7 +14,8 @@ const removeUnwantedCharacters = (line: string): string => {
 
 export const executeCommand = (command: string): Promise<string[]> => {
   return new Promise((resolve, reject) => {
-    exec(`${commandPrefix} ${command}`, (error, stdout, stderr) => {
+    const commandToExecute = enviroment === 'production' ? command : `${commandPrefix} "${command}"`;
+    exec(commandToExecute, (error, stdout, stderr) => {
       if (error) {
         reject(error);
       } else if (stderr) {
