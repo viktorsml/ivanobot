@@ -19,7 +19,7 @@ export const startArkServer = async (): Promise<StartArkServerResponse> => {
   };
   logger.action(arkStatusCode.initial);
   try {
-    const commandResponse = await executeCommand('docker start CaguamoArk');
+    const commandResponse = await executeCommand('docker exec -i CaguamoArk arkmanager start');
     console.log(commandResponse);
     return { successfullyStarted: true };
   } catch (error) {
