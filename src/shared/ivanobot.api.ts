@@ -5,7 +5,7 @@ const pjson = require('./../../package.json');
 export const botVersion: string = pjson.version;
 export const discordToken = process.env.TOKEN;
 export const enviroment = process.env.NODE_ENV;
-export const commandPrefix = enviroment === 'development' ? process.env.SSH_LOGIN : '';
+export const commandPrefix = process.env.SSH_LOGIN;
 
 export const logger = {
   action: (title: string, args: any[] = []) => {
