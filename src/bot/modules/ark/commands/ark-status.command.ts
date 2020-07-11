@@ -56,10 +56,12 @@ export const getArkStatus = async (): Promise<ArkStatus> => {
 };
 
 export const arkStatusCommand = async (message: Message) => {
-  const initialMessage = await message.channel.send('Revisando estado del servidor...');
+  const initialMessage = await message.channel.send('Revisando estado del servidor de ARK...');
   const { currentStatus, errorCode, arkOnlinePlayers } = await getArkStatus();
   if (errorCode) {
-    message.channel.send(friendlyErrorMessage('Whops! No puedo determinar el estado del servidor ARK. :disappointed_relieved:', errorCode));
+    message.channel.send(
+      friendlyErrorMessage('Whops! No puedo determinar el estado del servidor de ARK. :disappointed_relieved:', errorCode)
+    );
     initialMessage.delete();
     return;
   }
@@ -70,7 +72,7 @@ export const arkStatusCommand = async (message: Message) => {
     message.channel.send(`:white_check_mark: El servidor de ARK está activo (${arkOnlinePlayers}).`);
   }
   if (currentStatus === 'STARTING') {
-    message.channel.send(':construction_worker: El servidor de ARK se está encendiendo. Usualmente tarde ~3min.');
+    message.channel.send(':construction_worker: El servidor de ARK se está encendiendo. Usualmente tarda ~3min.');
   }
   initialMessage.delete();
 };

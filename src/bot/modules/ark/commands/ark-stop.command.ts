@@ -28,11 +28,13 @@ export const stopArkServer = async (): Promise<StopArkServerResponse> => {
 };
 
 export const arkStopCommand = async (message: Message) => {
-  const initialMessage = await message.channel.send('Revisando estado del servidor...');
+  const initialMessage = await message.channel.send('Revisando estado del servidor de ARK...');
   const { currentStatus, errorCode } = await getArkStatus();
 
   if (errorCode) {
-    message.channel.send(friendlyErrorMessage('Whops! No puedo determinar el estado del servidor ARK. :disappointed_relieved:', errorCode));
+    message.channel.send(
+      friendlyErrorMessage('Whops! No puedo determinar el estado del servidor de ARK. :disappointed_relieved:', errorCode)
+    );
     initialMessage.delete();
     return;
   }
@@ -46,13 +48,15 @@ export const arkStopCommand = async (message: Message) => {
 
   // stop server
   initialMessage.delete();
-  const pendingMessage = await message.channel.send('No me duele, me quema, me lastima pero ni pedo, estoy apagando el server...');
+  const pendingMessage = await message.channel.send(
+    'No me duele, me quema, me lastima, pero ni pedo, estoy apagando el servidor de ARK...'
+  );
   const { successfullyStopped, errorCode: stopArkServerErroCode } = await stopArkServer();
 
   if (!successfullyStopped) {
     message.channel.send(
       friendlyErrorMessage(
-        'Hmm, que extraño. Ocurrió un problema desconocido. al momento de detener el servidor de ARK. :thinking:',
+        'Hmm, que extraño. Ocurrió un problema desconocido al momento de detener el servidor de ARK. :thinking:',
         stopArkServerErroCode
       )
     );

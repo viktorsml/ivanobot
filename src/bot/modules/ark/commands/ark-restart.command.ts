@@ -42,8 +42,8 @@ export const arkRestartCommand = async (message: Message) => {
 
   if (currentStatus === 'OFFLINE') {
     message.channel.send(
-      'Whops! No puedo reiniciar el servidor porque se encuentra apagado. :no_mouth:' +
-        '\n\n> *Usa el comand "!ark start" si quieres iniciar el servidor.*'
+      'Whops! No puedo reiniciar el servidor de ARK porque se encuentra apagado. :no_mouth:' +
+        '\n\n> *Usa el comand "!ark start" si quieres iniciar el servidor de ARK.*'
     );
     initialMessage.delete();
     return;
@@ -51,7 +51,7 @@ export const arkRestartCommand = async (message: Message) => {
 
   if (currentStatus === 'STARTING') {
     message.channel.send(
-      'Whops! No puedo reiniciar el servidor porque se encuentra iniciandose, espera a que se inicie por completo. :no_mouth:'
+      'Whops! No puedo reiniciar el servidor de ARK porque se encuentra iniciándose, espera a que se inicie por completo. :no_mouth:'
     );
     initialMessage.delete();
     return;
@@ -59,7 +59,7 @@ export const arkRestartCommand = async (message: Message) => {
 
   const { successfullyRestarted, errorCode } = await restartArkServer();
   const pendingMessage = await message.channel.send(
-    ':construction_worker: Listo, el servidor se está reiniciando. Te avisaré cuando ya puedas entrar a jugar. (Usualmente tarda 3min.)'
+    ':construction_worker: Listo, el servidor de ARK se está reiniciando. Te avisaré cuando ya puedas entrar a jugar. (Usualmente tarda 3min.)'
   );
 
   if (!successfullyRestarted) {

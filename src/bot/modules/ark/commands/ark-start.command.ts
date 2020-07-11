@@ -40,7 +40,7 @@ export const arkStartCommand = async (message: Message) => {
   if (currentStatus === 'STARTING') {
     logger.action('ARK_SERVER_ALREADY_STARTING', ['No extra accion was made.']);
     message.channel.send(
-      'El servidor de ARK ya se encuentra activadose, espera un momento en lo que está disponible (Ususalmente tarda unos ~3min). :wink:'
+      'El servidor de ARK ya se encuentra activando, espera un momento en lo que está disponible (Usualmente tarda unos ~3min). :wink:'
     );
     initialMessage.delete();
     return;
@@ -63,7 +63,7 @@ export const arkStartCommand = async (message: Message) => {
   if (!successfullyStarted) {
     message.channel.send(
       friendlyErrorMessage(
-        'Hmm, que extraño. Ocurrió un problema desconocido. al momento de inciar el servidor de ARK. :thinking:',
+        'Hmm, que extraño. Ocurrió un problema desconocido. al momento de iniciar el servidor de ARK. :thinking:',
         startArkServerErrorCode
       )
     );
@@ -71,7 +71,7 @@ export const arkStartCommand = async (message: Message) => {
   }
 
   const pendingMessage = await message.channel.send(
-    ':construction_worker: Listo, el servidor se está iniciando. Te avisaré cuando ya puedas entrar a jugar. (Usualmente tarda ~3min.)'
+    ':construction_worker: Listo, el servidor de ARK se está iniciando. Te avisaré cuando ya puedas entrar a jugar. (Usualmente tarda ~3min.)'
   );
 
   // check server status every 20 seconds to see if people can start to play
@@ -82,7 +82,7 @@ export const arkStartCommand = async (message: Message) => {
     message.channel.send(
       friendlyErrorMessage(
         `Lo siento mucho, ya no te podré avisar cuando ya puedas entrar, <@${message.author.id}>. ` +
-          'Ocurrió un problema al iniciar el server. :sob:',
+          'Ocurrió un problema al iniciar el servidor de ARK. :sob:',
         'INTERRUPTED_START_PROCESS'
       )
     );

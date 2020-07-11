@@ -11,10 +11,10 @@ export const arkServerLinkCommand = async (message: Message) => {
   }
 
   if (currentStatus === 'STARTING') {
-    message.channel.send('Aguantame poquito. En cuanto el servidor de ARK se inicie completamente podrás revisar el link. :cowboy:');
+    message.channel.send('Aguántame poquito. En cuanto el servidor de ARK se inicie completamente podrás revisar el link. :cowboy:');
     return;
   }
 
   const caguamoArkLink = arkServersLink.replace('ARKServers link: ', '');
-  message.channel.send(`Este es el link de estado del server CaguamoArk en ArkServers.net. :wink:\n\n${caguamoArkLink}`);
+  message.channel.send(`Este es el link de estado de CaguamoArk en *ArkServers.net* :wink:\n\n${caguamoArkLink}`);
 };
