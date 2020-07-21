@@ -3,6 +3,7 @@ import { Message } from 'discord.js';
 import { NOT_ENOUGH_PERMISIONS } from '../../../shared/actions-text';
 import { logger } from '../../../shared/ivanobot.api';
 import { canUserExecuteCommand } from '../../utils/validation';
+import { arkBackupCommand } from './commands/akr-backup';
 import { arkServerLinkCommand } from './commands/ark-link.command';
 import { arkRestartCommand } from './commands/ark-restart.command';
 import { arkStartCommand } from './commands/ark-start.command';
@@ -52,7 +53,9 @@ export const arkModule = (message: Message) => {
     case 'restart':
       arkRestartCommand(message);
       break;
-
+    case 'backup':
+      arkBackupCommand(message);
+      break;
     default:
       message.reply(invalidCommandText(command));
       break;
