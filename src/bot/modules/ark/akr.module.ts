@@ -5,6 +5,7 @@ import { logger } from '../../../shared/ivanobot.api';
 import { canUserExecuteCommand } from '../../utils/validation';
 import { arkBackupCommand } from './commands/akr-backup';
 import { arkServerLinkCommand } from './commands/ark-link.command';
+import { arkOnlinePlayersCommand } from './commands/ark-players';
 import { arkRestartCommand } from './commands/ark-restart.command';
 import { arkStartCommand } from './commands/ark-start.command';
 import { arkStatusCommand } from './commands/ark-status.command';
@@ -55,6 +56,9 @@ export const arkModule = (message: Message) => {
       break;
     case 'backup':
       arkBackupCommand(message);
+      break;
+    case 'players':
+      arkOnlinePlayersCommand(message);
       break;
     default:
       message.reply(invalidCommandText(command));
