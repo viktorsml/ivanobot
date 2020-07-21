@@ -17,9 +17,9 @@ interface ExecuteCommandOptions {
 }
 
 export const executeCommand = (command: string, { runOnDocker }: ExecuteCommandOptions = { runOnDocker: false }): Promise<string[]> => {
-  const dockerPrefix = runOnDocker ? 'docker exec -i CaguamoArk' : '';
   return new Promise((resolve, reject) => {
-    const commandToExecute = enviroment === 'production' ? command : `${commandPrefix} ${dockerPrefix} "${command}"`;
+    const dockerPrefix = runOnDocker ? 'docker exec -i CaguamoArk' : '';
+    const commandToExecute = enviroment === 'production' ? `${dockerPrefix} ${command}` : `${commandPrefix} ${dockerPrefix} "${command}"`;
     exec(commandToExecute, (error, stdout, stderr) => {
       if (error) {
         reject(error);
