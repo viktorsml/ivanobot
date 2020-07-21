@@ -19,7 +19,7 @@ export const restartArkServer = async (): Promise<RestartArkServerResponse> => {
   };
   logger.action(arkStatusCode.initial);
   try {
-    const commandResponse = await executeCommand('docker exec -i CaguamoArk arkmanager restart --saveworld');
+    const commandResponse = await executeCommand('arkmanager restart --saveworld', { runOnDocker: true });
     logger.action(arkStatusCode.success, [commandResponse]);
     return { successfullyRestarted: true };
   } catch (error) {

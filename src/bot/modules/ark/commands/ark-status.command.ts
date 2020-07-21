@@ -29,7 +29,7 @@ export const getArkStatus = async (): Promise<ArkStatus> => {
   };
   logger.action(arkStatusCode.initial);
   try {
-    const commandResponse = await executeCommand('docker exec -i CaguamoArk arkmanager status');
+    const commandResponse = await executeCommand('arkmanager status', { runOnDocker: true });
     const isServerRunning = isYes(commandResponse.find((line) => /(Server running)/.test(line)));
     const isServerListening = isYes(commandResponse.find((line) => /(Server listening)/.test(line)));
     const isServerOnline = isYes(commandResponse.find((line) => /(Server online)/.test(line)));

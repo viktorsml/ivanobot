@@ -1,11 +1,13 @@
 import { Message } from 'discord.js';
+
+import { botVersion, handleBotDevelopment } from '../../shared/ivanobot.api';
 import { arkModule } from '../modules/ark/akr.module';
-import { levelModule } from '../modules/level/level.module';
 import { ivanoModule } from '../modules/ivano/ivano.module';
-import { botVersion } from '../../shared/ivanobot.api';
+import { levelModule } from '../modules/level/level.module';
 
 export const messageListener = (message: Message) => {
   const [command] = message.content.split(' ');
+  if (handleBotDevelopment(message)) return;
   switch (command) {
     case '!ark':
       arkModule(message);

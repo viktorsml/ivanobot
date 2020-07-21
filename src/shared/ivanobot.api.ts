@@ -1,3 +1,5 @@
+import { Message, MessageEmbed } from 'discord.js';
+
 require('dotenv').config();
 
 const pjson = require('./../../package.json');
@@ -21,4 +23,18 @@ export const logger = {
 
 export const friendlyErrorMessage = (friendlyErrorMessage: string, errorCode: string): string => {
   return `${friendlyErrorMessage}\n\n>>> \`\`\`diff\n- ${errorCode}\n\`\`\``;
+};
+
+export const handleBotDevelopment = ({ channel, content }: Message): boolean => {
+  const developmentServerId = '735188756386021429';
+  if (channel.id !== developmentServerId && content.startsWith('!') && enviroment === 'development') {
+    channel.send(
+      new MessageEmbed()
+        .setColor('YELLOW')
+        .setTitle('Aguántame poquito.')
+        .setDescription('Estoy siendo desarrollado en este momento. Estaré disponible en un rato más. :cowboy:')
+    );
+    return true;
+  }
+  return false;
 };
